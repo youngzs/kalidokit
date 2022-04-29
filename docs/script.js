@@ -1,3 +1,4 @@
+import { skipPartiallyEmittedExpressions } from "typescript";
 import * as Kalidokit from "../dist";
 //Import Helper Functions from Kalidokit
 const remap = Kalidokit.Utils.remap;
@@ -45,29 +46,30 @@ function animate() {
 }
 animate();
 
+
 /* VRM CHARACTER SETUP */
 
 // Import Character VRM
-const loader = new THREE.GLTFLoader();
-loader.crossOrigin = "anonymous";
+// const loader = new THREE.GLTFLoader();
+// loader.crossOrigin = "anonymous";
 // Import model from URL, add your own model here
-loader.load(
-    "https://cdn.glitch.com/29e07830-2317-4b15-a044-135e73c7f840%2FAshtra.vrm?v=1630342336981",
+// loader.load(
+//     "./vrms/AliciaSolid.vrm",
 
-    (gltf) => {
-        THREE.VRMUtils.removeUnnecessaryJoints(gltf.scene);
+//     (gltf) => {
+//         THREE.VRMUtils.removeUnnecessaryJoints(gltf.scene);
 
-        THREE.VRM.from(gltf).then((vrm) => {
-            scene.add(vrm.scene);
-            currentVrm = vrm;
-            currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
-        });
-    },
+//         THREE.VRM.from(gltf).then((vrm) => {
+//             scene.add(vrm.scene);
+//             currentVrm = vrm;
+//             currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
+//         });
+//     },
 
-    (progress) => console.log("Loading model...", 100.0 * (progress.loaded / progress.total), "%"),
+//     (progress) => console.log("Loading model...", 100.0 * (progress.loaded / progress.total), "%"),
 
-    (error) => console.error(error)
-);
+//     (error) => console.error(error)
+// );
 
 // Animate Rotation Helper function
 const rigRotation = (name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
@@ -261,7 +263,7 @@ const onResults = (results) => {
 
 const holistic = new Holistic({
     locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/${file}`;
+        return `./holistic/${file}`;
     },
 });
 
@@ -328,3 +330,39 @@ const camera = new Camera(videoElement, {
     height: 480,
 });
 camera.start();
+
+const loader = new THREE.GLTFLoader();
+function loadVrm(url){
+ 
+    loader.load(
+        url,
+        (gltf) => {
+            THREE.VRMUtils.removeUnnecessaryJoints(gltf.scene);
+
+            THREE.VRM.from(gltf).then((vrm) => {
+                scene.add(vrm.scene);
+                currentVrm = vrm;
+                currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
+            });
+        },
+
+        (progress) => console.log("Loading model...", 100.0 * (progress.loaded / progress.total), "%"),
+
+        (error) => console.error(error)
+    );
+}
+
+loadVrm("./vrms/AliciaSolid.vrm");
+
+setTimeout(() => {
+    currentVrm.scene.position.x = -0.4;
+    currentVrm.scene.position.y = 0.1;
+    loadVrm("./vrms/Midori.vrm") ;
+}, 10000);
+
+
+setTimeout(() => {
+    loadVrm("./vrms/Ashtra.vrm") ;
+    currentVrm.scene.position.x = 0.4;
+    currentVrm.scene.position.y = 0.1;
+}, 20000);

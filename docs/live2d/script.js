@@ -64,7 +64,7 @@ const videoElement = document.querySelector(".input_video"),
     // create media pipe facemesh instance
     facemesh = new FaceMesh({
         locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+            return `../face_mesh/${file}`;
         },
     });
 
